@@ -11,7 +11,7 @@ fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
   return(fc.all)
 }
 
-#' complexSCsimulation
+#' GeneScape
 #' 
 #' This function simulate single cell RNAseq data with complicated differential expression and correlation structure.
 #' @param nCells number of cells
@@ -63,15 +63,15 @@ fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
 #' @export
 #' 
 
-complexSCsimulation <- function(nCells = 6000, nGroups = NULL, groups = NULL, lib.size.loc = 9.3, lib.size.scale = 0.25,
-                                de.fc.mat = NULL, 
-                                nGenes = 5000, gene.mean.shape = 0.3, gene.mean.rate = 0.15, 
-                                de.n = 50, de.share = NULL, de.id = NULL, de.fc.loc = 0.7, de.fc.scale = 0.2, 
-                                add.sub = FALSE, sub.major = NULL, sub.prop = 0.1, sub.group = NULL, sub.de.n = 20, 
-                                sub.de.id = NULL, sub.de.common = FALSE, sub.de.fc.loc = 0.7, sub.de.fc.scale = 0.2, 
-                                add.cor = FALSE, cor.n = 4, cor.size = 20, cor.cor = 0.7, cor.id = NULL, band.width = 10,
-                                add.hub = FALSE, hub.n = 10, hub.size = 20, hub.cor = 0.4, hub.id = NULL, hub.fix = NULL,
-                                drop = FALSE, dropout.location = -2, dropout.slope = -1){
+GeneScape <- function(nCells = 6000, nGroups = NULL, groups = NULL, lib.size.loc = 9.3, lib.size.scale = 0.25,
+                      de.fc.mat = NULL, 
+                      nGenes = 5000, gene.mean.shape = 0.3, gene.mean.rate = 0.15, gene.means = NULL,
+                      de.n = 50, de.share = NULL, de.id = NULL, de.fc.loc = 0.7, de.fc.scale = 0.2, 
+                      add.sub = FALSE, sub.major = NULL, sub.prop = 0.1, sub.group = NULL, sub.de.n = 20, 
+                      sub.de.id = NULL, sub.de.common = FALSE, sub.de.fc.loc = 0.7, sub.de.fc.scale = 0.2, 
+                      add.cor = FALSE, cor.n = 4, cor.size = 20, cor.cor = 0.7, cor.id = NULL, band.width = 10,
+                      add.hub = FALSE, hub.n = 10, hub.size = 20, hub.cor = 0.4, hub.id = NULL, hub.fix = NULL,
+                      drop = FALSE, dropout.location = -2, dropout.slope = -1){
   if (is.null(de.fc.mat)){
     if (is.null(nGroups)){
       nGroups <- 4
@@ -98,7 +98,11 @@ complexSCsimulation <- function(nCells = 6000, nGroups = NULL, groups = NULL, li
     }
     
     lib.size <- rlnorm(nCells, lib.size.loc[groups], lib.size.scale[groups])   # library size
-    gene.means <- rgamma(nGenes, shape = gene.mean.shape, rate = gene.mean.rate)   # gene expression level
+    if (is.null(gene.means)){
+      gene.means <- rgamma(nGenes, shape = gene.mean.shape, rate = gene.mean.rate)   # gene expression level
+    } else if (length(gene.means) != nGenes){
+      stop("Length of gene.means does not match nGenes.")
+    }
     
     if (is.null(de.id)){
       if (length(de.n) == 1){
@@ -232,7 +236,7 @@ complexSCsimulation <- function(nCells = 6000, nGroups = NULL, groups = NULL, li
         sub.de.fc <- fcsim(nGenes, sub.de.id[[1]], sub.de.fc.loc[[1]], sub.de.fc.scale[1])
         sub.group.fc[sub.de.id[[1]], ] <- matrix(sub.de.fc[sub.de.id[[1]]], nrow = length(sub.de.id[[1]]), ncol = length(sub.major), byrow = F)
       } else {
-        for (idx in seq_len(nGroups)) {
+        for (idx in seq_len(sub.major)) {
           sub.de.fc <- fcsim(nGenes, sub.de.id[[idx]], sub.de.fc.loc[[idx]], sub.de.fc.scale[idx])
           sub.group.fc[sub.de.id[[idx]], idx] <- sub.de.fc[sub.de.id[[idx]]]
         }
@@ -262,11 +266,17 @@ complexSCsimulation <- function(nCells = 6000, nGroups = NULL, groups = NULL, li
     }
     
     groups.old <- groups
-    for (i in 1:length(sub.major)){
-      groups.old[groups.old == (i + nGroups)] <- sub.major[i]
+    if (add.sub){
+      for (i in 1:length(sub.major)){
+        groups.old[groups.old == (i + nGroups)] <- sub.major[i]
+      }
     }
     lib.size <- rlnorm(nCells, lib.size.loc[groups.old], lib.size.scale[groups.old])   # library size
-    gene.means <- rgamma(nGenes, shape = gene.mean.shape, rate = gene.mean.rate)   # gene expression level
+    if (is.null(gene.means)){
+      gene.means <- rgamma(nGenes, shape = gene.mean.shape, rate = gene.mean.rate)   # gene expression level
+    } else if (length(gene.means) != nGenes){
+      stop("Length of gene.means does not match nGenes.")
+    }
     
     group.fc.total <- de.fc.mat
     add.sub <- FALSE
@@ -276,14 +286,16 @@ complexSCsimulation <- function(nCells = 6000, nGroups = NULL, groups = NULL, li
       de.id[[i]] <- which(de.fc.mat[,i] != 1)
     }
     
-    nsub <- length(sub.major)
-    if (nsub > 0){
-      sub.de.id <- list()
-      for (j in 1:nsub){
-        sub.de.id[[j]] <- setdiff(which(de.fc.mat[,j + nGroups] != 1), which(de.fc.mat[,sub.major[j]] != 1))
+    if (add.sub){
+      nsub <- length(sub.major)
+      if (nsub > 0){
+        sub.de.id <- list()
+        for (j in 1:nsub){
+          sub.de.id[[j]] <- setdiff(which(de.fc.mat[,j + nGroups] != 1), which(de.fc.mat[,sub.major[j]] != 1))
+        }
+      } else {
+        sub.de.id <- NULL
       }
-    } else {
-      sub.de.id <- NULL
     }
   }
   
