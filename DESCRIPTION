@@ -1,12 +1,15 @@
 Package: GeneScape
 Type: Package
-Title: Simulation of single cell data with complex structure
-Version: 1.0
-Date: 2023-4-26
+Title: Simulate single cell and spatial transcriptomics data
+Version: 1.1
+Date: 2023-07-02
 Author: Qi Gao
+Authors@R: c(person(given = "Qi", family ="Gao", role = c("aut", "cre"),
+                      email = "qi.gao@duke.edu"))
 Maintainer: Qi Gao <qi.gao@duke.edu>
-Description: This package is a modified version of the splatter R package. This package simulate single cell RNAseq data with more complicated differential expression and correlation structures, such as sub-cell-types, correlated genes (AR(1) correlation structure with bound, mimicking pathways) and hub genes. splatter was developed by Luke Zappia, Belinda Phipson, Christina Azodi, Alicia Oshlack and is available at https://bioconductor.org/packages/release/bioc/html/splatter.html.
+Description: Simulate single cell and spatial transcriptomics data with complicated heterogeneity structure with or without reference dataset.
 Encoding: UTF-8
 License: GPL (>= 3)
-Imports: MASS (>= 7.3-53.1), corpcor (>= 1.6.10)
-RoxygenNote: 7.2.3
+Imports: Rcpp (>= 1.0.10), concaveman, MASS (>= 7.3-53.1), corpcor (>= 1.6.10), stats, sf
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1

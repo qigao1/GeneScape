@@ -1,7 +1,12 @@
 #' fcsim
 #' 
 #' This function similate differential expression fold change level
+#' @param n.gene total number of genes
+#' @param de.id index of differentially expressed genes
+#' @param fc.loc location parameter for fold change (log-normal distribution)
+#' @param fc.scale scale parameter for fold change (log-normal distribution)
 #' @references Zappia, L., Phipson, B., & Oshlack, A. (2017). Splatter: Simulation of single-cell RNA sequencing data. Genome Biology, 18(1). https://doi.org/10.1186/s13059-017-1305-0 
+#' @import stats
 #' 
 fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
   n.de <- length(de.id)
@@ -11,7 +16,7 @@ fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
   return(fc.all)
 }
 
-#' GeneScape
+#' scScape
 #' 
 #' This function simulate single cell RNAseq data with complicated differential expression and correlation structure.
 #' @param nCells number of cells
@@ -23,6 +28,7 @@ fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
 #' @param nGenes number of genes
 #' @param gene.mean.shape shape parameter for mean expression level (Gamma distribution)
 #' @param gene.mean.rate rate parameter for mean expression level (Gamma distribution)
+#' @param gene.means mean gene expression levels
 #' @param de.n number of differentially expressed genes in each cell type. Should be a integer or a vector of length nGroups
 #' @param de.share number of shared DE genes between neighbor cell types. Should be a vector of length (nGroups - 1)
 #' @param de.id the index of genes that are DE across cell types. Should be a list of vectors. 
@@ -60,10 +66,14 @@ fcsim <- function (n.gene, de.id, fc.loc, fc.scale){
 #' have more complicated differential expression structure, add sub-cell-types, correlated genes (AR(1) correlation structure with bound, mimicking pathways) and hub genes.
 #' @import corpcor
 #' @import MASS
+#' @import stats
+#' @examples
+#' set.seed(1)
+#' data <- scScape()
 #' @export
 #' 
 
-GeneScape <- function(nCells = 6000, nGroups = NULL, groups = NULL, lib.size.loc = 9.3, lib.size.scale = 0.25,
+scScape <- function(nCells = 6000, nGroups = NULL, groups = NULL, lib.size.loc = 9.3, lib.size.scale = 0.25,
                       de.fc.mat = NULL, 
                       nGenes = 5000, gene.mean.shape = 0.3, gene.mean.rate = 0.15, gene.means = NULL,
                       de.n = 50, de.share = NULL, de.id = NULL, de.fc.loc = 0.7, de.fc.scale = 0.2, 
