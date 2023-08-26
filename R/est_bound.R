@@ -23,8 +23,12 @@ est_bound <- function(sploc, ttype, nttype, thres = 1){
   res <- list()
   for (i in 1:nttype){
     sploc_temp <- sploc[ttype == i, ]
-    concave_poly <- concaveman(sploc_temp, length_threshold = thres)
-    res[[i]] <- st_polygon(list(concave_poly))
+    if (nrow(sploc_temp) != 0){
+      concave_poly <- concaveman(sploc_temp, length_threshold = thres)
+      res[[i]] <- st_polygon(list(concave_poly))
+    } else{
+      res[[i]] <- NULL
+    }
   }
   return(st_sfc(res))
 }

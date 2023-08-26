@@ -4,8 +4,9 @@
 \alias{aggregate_expression}
 \title{aggregate_expression}
 \usage{
-aggregate_expression(counts, cell_position, spot_position, dis_thres = 0.03,
-  sigma = 0.01, mean_spot_lib_size = 10000)
+aggregate_expression(counts, cell_position, spot_position,
+  dis_thres_prop = 0.03, sigma_prop = 0.01, lib_size_mean = 5000,
+  lib_size_dispersion = 3, cell_annotation = NULL)
 }
 \arguments{
 \item{counts}{read count matrix}
@@ -14,12 +15,16 @@ aggregate_expression(counts, cell_position, spot_position, dis_thres = 0.03,
 
 \item{spot_position}{coordinates of the spots}
 
-\item{dis_thres}{radius of the spot}
+\item{dis_thres_prop}{radius of the spot}
 
-\item{sigma}{standard deviation of normal distribution. larger sigma implies that cells 
+\item{sigma_prop}{standard deviation of normal distribution. larger sigma implies that cells 
 outside of the spot are more likely to contribute to the read observed in the spot}
 
-\item{mean_spot_lib_size}{mean library size of each spot}
+\item{lib_size_mean}{mean parameter of target library size (negative binomial distribution)}
+
+\item{lib_size_dispersion}{dispersion parameter of target library size (negative binomial distribution)}
+
+\item{cell_annotation}{cell type annotations}
 }
 \value{
 A matrix of the gene (row) expression in each spot (column)

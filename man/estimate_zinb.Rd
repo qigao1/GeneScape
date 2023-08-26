@@ -13,7 +13,7 @@ estimate_zinb(data, maxiter = 400)
 \item{maxiter}{maximum number of iteration for R optim}
 }
 \value{
-matrix of negative binomial distribution mean (1st row), dispersion (2nd row) and zero-inflation (3rd row) parameters.
+matrix of negative binomial distribution mean (1st column), dispersion (2nd column) and zero-inflation (3rd column) parameters.
 }
 \description{
 estimate_zinb

@@ -1,8 +1,8 @@
 Package: GeneScape
 Type: Package
 Title: Simulate single cell and spatial transcriptomics data
-Version: 1.1
-Date: 2023-07-02
+Version: 1.2
+Date: 2023-08-26
 Author: Qi Gao
 Authors@R: c(person(given = "Qi", family ="Gao", role = c("aut", "cre"),
                       email = "qi.gao@duke.edu"))
@@ -10,6 +10,6 @@ Maintainer: Qi Gao <qi.gao@duke.edu>
 Description: Simulate single cell and spatial transcriptomics data with complicated heterogeneity structure with or without reference dataset.
 Encoding: UTF-8
 License: GPL (>= 3)
-Imports: Rcpp (>= 1.0.10), concaveman, MASS (>= 7.3-53.1), corpcor (>= 1.6.10), stats, sf
+Imports: Rcpp (>= 1.0.10), concaveman, MASS (>= 7.3-53.1), corpcor (>= 1.6.10), stats, sf, lamW
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1

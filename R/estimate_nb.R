@@ -7,7 +7,27 @@
 #' https://doi.org/10.1007/s00362-022-01373-1
 #' @export
 #' 
-estimate_nb <- function(datavec){  n <- length(datavec)  m <- mean(datavec)  v <- var(datavec)  sumd <- sum(datavec)  r <- m^2 / (v - m)  invmr <- 1 / (m + r)  l1 <- sum(digamma(datavec + r)) - n * digamma(r) +     n * log(r * invmr)  l2 <- (1 / m - invmr) * sumd - n * r * invmr  l11 <- sum(trigamma(datavec + r)) - n * trigamma(r) +     n / r - n * invmr  l22 <- (invmr * invmr - 1 / m^2) * sumd + n * r * invmr * invmr  if (l11 * l22 != 0){    mfinal <- m + (l2 * l11) / (- l11 * l22)    rfinal <- r + (- l1 * l22) / (l11 * l22)    return(c(max(mfinal, 0), max(rfinal, 0), 0))  } else {    return(c(m, r, 0))  }}
+estimate_nb <- function(datavec){
+  n <- length(datavec)
+  m <- mean(datavec)
+  v <- var(datavec)
+  sumd <- sum(datavec)
+  r <- m^2 / (v - m)
+  invmr <- 1 / (m + r)
+  l1 <- sum(digamma(datavec + r)) - n * digamma(r) + 
+    n * log(r * invmr)
+  l2 <- (1 / m - invmr) * sumd - n * r * invmr
+  l11 <- sum(trigamma(datavec + r)) - n * trigamma(r) + 
+    n / r - n * invmr
+  l22 <- (invmr * invmr - 1 / m^2) * sumd + n * r * invmr * invmr
+  if (l11 * l22 != 0){
+    mfinal <- m + (l2 * l11) / (- l11 * l22)
+    rfinal <- r + (- l1 * l22) / (l11 * l22)
+    return(c(max(mfinal, 0), max(rfinal, 0), 0))
+  } else {
+    return(c(m, r, 0))
+  }
+}
 
 
 
@@ -58,7 +78,7 @@ zinb_nll <- function(y, par){
 #' @author Qi Gao
 #' @param data target data matrix, rows as genes and columns as spots
 #' @param maxiter maximum number of iteration for R optim
-#' @return matrix of negative binomial distribution mean (1st row), dispersion (2nd row) and zero-inflation (3rd row) parameters.
+#' @return matrix of negative binomial distribution mean (1st column), dispersion (2nd column) and zero-inflation (3rd column) parameters.
 #' @reference Zhao, J., Kim, HM. New closed-form efficient estimators for the negative binomial distribution. Stat Papers (2022). 
 #' https://doi.org/10.1007/s00362-022-01373-1
 #' @export
